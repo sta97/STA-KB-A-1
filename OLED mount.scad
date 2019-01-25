@@ -18,7 +18,7 @@ module pcb_mount() {
     difference(){
     cube([36,26,2],true);
        pcb_holes();
-        cube([20,4,2.5],true);
+        cube([15,10,2.5],true);
     }
 }
 
