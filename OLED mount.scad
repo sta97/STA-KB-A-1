@@ -5,6 +5,14 @@ pcb_mount_thickness = [0,0,2];
 
 pcb_mount();
 translate([0,0,30]) display_mount();
+attachment_curve();
+
+module attachment_curve() {
+     for(n = [0:100]) {
+         t = n/100;
+         translate([sin(t*180)*-20-18+t*3,t*-8,cos(t*180)*-15.5+15.5]) rotate([-45*t,180*t,30*t]) cube([2,25,2],true);
+     }   
+}
 
 module pcb_mount() {
     difference(){
