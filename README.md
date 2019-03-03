@@ -10,3 +10,5 @@ Update as of Feb 10th 2019: Prototype PCBs have been ordered. EasyEDA link shoul
 Update Feb 24th: PCBs arrived and have been soldered. Test code functional.
 
 Update Mar 2nd: left board assembled and working
+
+Update Mar 3rd: full assembled and board working
