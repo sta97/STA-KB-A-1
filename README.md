@@ -8,3 +8,5 @@ LCD/Display header has more pins than required to provide support for displays o
 Update as of Feb 10th 2019: Prototype PCBs have been ordered. EasyEDA link should be accurate to ordered prototype. Working prototype should be assembled within a month.
 
 Update Feb 24th: PCBs arrived and have been soldered. Test code functional.
+
+Update Mar 2nd: left board assembled and working
