@@ -26,39 +26,40 @@ void setup() {
   oled.begin();
 }
 
-String read_matrix() {
-  bool noActive = true;
-  String s;
+void loop() {
+  oled.clearDisplay();
+
+  int numActive = 0;
 
   for (int row = 0; row < NUM_ROWS; ++row) {
     for (int col = 0; col < NUM_COLS; ++col) {
       digitalWrite(col_pins[col], LOW);
+      const int x = row * 5;
+      const int y = col * 5 + (col > 5 ? 5 : 0);
+      oled.drawRect(y, x, 5, 5, WHITE);
       if (!digitalRead(row_pins[row])) {
-        if (!noActive)
-          s += ", ";
-        s += "(" + String(col + 1) + ", " + String(row + 1) + ")";
-        noActive = false;
+        oled.drawPixel(y + 2, x + 2, WHITE);
+        ++numActive;
       }
       digitalWrite(col_pins[col], HIGH);
     }
   }
 
-  return s;
-}
-
-void loop() {
-  oled.clearDisplay();
-
   oled.setTextSize(1);
   oled.setTextColor(WHITE);
-  oled.setCursor(0, 0);
+  oled.setCursor(0, 30);
 
-  String s = read_matrix();
-
-  if (s.length() == 0)
-    oled.print("no active keys");
-  else
-    oled.print(s);
+  switch (numActive) {
+    case 0:
+      oled.print("no active keys");
+      break;
+    case 1:
+      oled.print("1 active key");
+      break;
+    default:
+      oled.print(numActive);
+      oled.print(" active keys");
+  }
 
   oled.display();
 
