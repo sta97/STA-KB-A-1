@@ -25,31 +25,31 @@ const int col_pins[NUM_COLS] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16};
   };
 */
 
-const uint8_t layers[][NUM_ROWS][NUM_COLS] =
+const uint16_t layers[][NUM_ROWS][NUM_COLS] =
 {
   {
     {0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5,          KEY_6, KEY_7, KEY_8, KEY_9,     KEY_0, KEY_BACKSPACE},
-    {0, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,          KEY_Y, KEY_U, KEY_I, KEY_O,     KEY_P, 0},
-    {0, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,          KEY_H, KEY_J, KEY_K, KEY_L,     KEY_UP, 0},
-    {0, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_SPACE,      KEY_B, KEY_N, KEY_M, KEY_LEFT,  KEY_DOWN, KEY_RIGHT}
+    {MODIFIERKEY_ALT, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,          KEY_Y, KEY_U, KEY_I, KEY_O,     KEY_P, 0},
+    {MODIFIERKEY_SHIFT, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,          KEY_H, KEY_J, KEY_K, KEY_L,     KEY_UP, 0},
+    {MODIFIERKEY_CTRL, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_SPACE,      KEY_B, KEY_N, KEY_M, KEY_LEFT,  KEY_DOWN, KEY_RIGHT}
   },
   {
-    {0, KEY_PERIOD, 0, 0, 0, 0,               0, 0, KEY_EQUAL, KEY_LEFT_BRACE, KEY_RIGHT_BRACE, KEY_ENTER},
-    {0, KEY_QUOTE, 0, KEY_ESC, 0, KEY_TAB,    0, 0, 0, 0, KEY_PRINTSCREEN, 0},
-    {0, 0, 0, 0, 0, 0,                        0, 0, 0, 0, KEY_PAGE_UP, 0},
-    {0, 0, 0, 0, 0, KEY_COMMA,                0, 0, 0, KEY_HOME, KEY_PAGE_DOWN, KEY_END}
+    {0, KEY_PERIOD, 0, 0, 0, 0,                             0, 0, KEY_EQUAL, KEY_LEFT_BRACE, KEY_RIGHT_BRACE, KEY_ENTER},
+    {MODIFIERKEY_ALT, KEY_QUOTE, 0, KEY_ESC, 0, KEY_TAB,    0, 0, 0, 0, KEY_PRINTSCREEN, 0},
+    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, MODIFIERKEY_GUI,        0, 0, 0, 0, KEY_PAGE_UP, 0},
+    {MODIFIERKEY_CTRL, 0, 0, 0, 0, KEY_COMMA,               0, 0, 0, KEY_HOME, KEY_PAGE_DOWN, KEY_END}
   },
   {
-    {0, KEY_SLASH, 0, 0, 0, 0, 0,    0, KEY_BACKSLASH, 0, 0, KEY_DELETE},
-    {0, 0, 0, 0, 0, 0,               0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0,               0, 0, 0, 0, KEY_MEDIA_PLAY_PAUSE, 0},
-    {0, 0, 0, 0, 0, KEY_MINUS,       0, 0, 0, KEY_MEDIA_VOLUME_DEC, KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_INC},
+    {0, KEY_SLASH, 0, 0, 0, 0, 0,                   0, KEY_BACKSLASH, 0, 0, KEY_DELETE},
+    {MODIFIERKEY_ALT, 0, 0, 0, 0, 0,                0, 0, 0, 0, 0, 0},
+    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, 0,              0, 0, 0, 0, KEY_MEDIA_PLAY_PAUSE, 0},
+    {MODIFIERKEY_CTRL, 0, 0, 0, 0, KEY_MINUS,       0, 0, 0, KEY_MEDIA_VOLUME_DEC, KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_INC},
   },
   {
-    {0, KEY_SEMICOLON, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0,                0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0,                0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0,                0, 0, 0, 0, 0, 0},
+    {0, KEY_SEMICOLON, 0, 0, 0, 0,        0, 0, 0, 0, 0, 0},
+    {MODIFIERKEY_ALT, 0, 0, 0, 0, 0,      0, 0, 0, 0, 0, 0},
+    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0},
+    {MODIFIERKEY_CTRL, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0},
   }
 };
 
@@ -110,40 +110,12 @@ void update_state(void) {
   read_matrix();
 }
 
-void add_key(uint8_t key) {
-  if (key == 0) //0 keys are special, so do not add to array.
-    return;
-
-  for (int i = 0; i < 6; ++i) {
-    if (keyboard_keys[i] == key)
-      break;
-    if (keyboard_keys[i] == 0) {
-      keyboard_keys[i] = key;
-      break;
-    }
-  }
-}
-
-void remove_key(uint8_t key) {
-  if (key == 0) //0 keys are not added to array, so don't waste time trying to remove them.
-    return;
-
-  for (int i = 0; i < 6; ++i) {
-    if (keyboard_keys[i] == key)
-      keyboard_keys[i] = 0;
-    if (keyboard_keys[i] == 0 && i < 5) {
-      keyboard_keys[i] = keyboard_keys[i + 1];
-      keyboard_keys[i + 1] = 0;
-    }
-  }
-}
-
 void remove_keys() {
   for (int row = 0; row < NUM_ROWS; ++row) {
     for (int col = 0; col < NUM_COLS; ++col) {
       if (!new_state[row][col])
         for (int i = 0; i < 4; ++i) //clear everything so keys aren't stuck on from layer switch.
-          remove_key(layers[i][row][col]);
+          Keyboard.release(layers[i][row][col]);
     }
   }
 }
@@ -152,25 +124,9 @@ void add_keys() {
   for (int row = 0; row < NUM_ROWS; ++row) {
     for (int col = 0; col < NUM_COLS; ++col) {
       if (!old_state[row][col] && new_state[row][col])
-        add_key(layers[layer][row][col]);
+        Keyboard.press(layers[layer][row][col]);
     }
   }
-}
-
-void modifiers() {
-  int mods = 0;
-
-  if (new_state[1][0])
-    mods = mods | MODIFIERKEY_ALT;
-  if (new_state[2][0])
-    mods = mods | MODIFIERKEY_SHIFT;
-  if (new_state[3][0])
-    mods = mods | MODIFIERKEY_CTRL;
-
-  if (new_state[2][5] && layer == 1)
-    mods = mods | MODIFIERKEY_GUI;
-
-  Keyboard.set_modifier(mods);
 }
 
 void set_layer() {
@@ -188,8 +144,6 @@ void keyboard_logic() {
   remove_keys();
 
   add_keys();
-
-  modifiers();
 }
 
 void loop() {
