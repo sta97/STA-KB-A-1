@@ -167,7 +167,7 @@ void modifiers() {
   if (new_state[3][0])
     mods = mods | MODIFIERKEY_CTRL;
 
-  if (new_state[2][5])
+  if (new_state[2][5] && layer == 1)
     mods = mods | MODIFIERKEY_GUI;
 
   Keyboard.set_modifier(mods);
