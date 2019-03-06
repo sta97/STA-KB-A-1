@@ -46,10 +46,10 @@ const uint16_t layers[][NUM_ROWS][NUM_COLS] =
     {MODIFIERKEY_CTRL, 0, 0, 0, 0, KEY_MINUS,       0, 0, 0, KEY_MEDIA_VOLUME_DEC, KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_INC},
   },
   {
-    {0, KEY_SEMICOLON, 0, 0, 0, 0,        0, 0, 0, 0, 0, 0},
-    {MODIFIERKEY_ALT, 0, 0, 0, 0, 0,      0, 0, 0, 0, 0, 0},
-    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, 0,    0, 0, 0, 0, 0, 0},
-    {MODIFIERKEY_CTRL, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0},
+    {0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,       KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11},
+    {MODIFIERKEY_ALT, KEY_F12, 0, 0, 0, 0,            0, 0, 0, 0, 0, 0},
+    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, 0,                0, 0, 0, 0, 0, 0},
+    {MODIFIERKEY_CTRL, 0, 0, 0, 0, KEY_SEMICOLON,     0, 0, 0, 0, 0, 0},
   }
 };
 
