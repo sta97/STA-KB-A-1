@@ -10,7 +10,9 @@ const int NUM_COLS = 12;
 const int row_pins[NUM_ROWS] = {0, 1, 2, 3};
 const int col_pins[NUM_COLS] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16};
 
-// key[0][0] should always be 0. Logic ignores any defined functions because this is the mode switch key.
+const uint16_t NOP = 0;
+const uint16_t MODE_SWITCH = 0xFFFF;
+
 /* modes will be added later. Modes will each have their own layers and logic so for example,
   the default layer for a WoW mode could have the actionbar keys moved down from the number row for reducing strain while another layer is for typing chat messages.
   Custom logic should allow modes to change layers in whatever way would be most useful, like a chat layer toggling on and off rather than having to hold a key down.
@@ -28,28 +30,28 @@ const int col_pins[NUM_COLS] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16};
 const uint16_t layers[][NUM_ROWS][NUM_COLS] =
 {
   {
-    {0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5,          KEY_6, KEY_7, KEY_8, KEY_9,     KEY_0, KEY_BACKSPACE},
-    {MODIFIERKEY_ALT, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,          KEY_Y, KEY_U, KEY_I, KEY_O,     KEY_P, 0},
-    {MODIFIERKEY_SHIFT, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,          KEY_H, KEY_J, KEY_K, KEY_L,     KEY_UP, 0},
+    {MODIFIERKEY_GUI, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5,          KEY_6, KEY_7, KEY_8, KEY_9,     KEY_0, KEY_BACKSPACE},
+    {MODIFIERKEY_ALT, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,          KEY_Y, KEY_U, KEY_I, KEY_O,     KEY_P, NOP},
+    {MODIFIERKEY_SHIFT, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,          KEY_H, KEY_J, KEY_K, KEY_L,     KEY_UP, NOP},
     {MODIFIERKEY_CTRL, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_SPACE,      KEY_B, KEY_N, KEY_M, KEY_LEFT,  KEY_DOWN, KEY_RIGHT}
   },
   {
-    {0, KEY_PERIOD, 0, 0, 0, 0,                             0, 0, KEY_EQUAL, KEY_LEFT_BRACE, KEY_RIGHT_BRACE, KEY_ENTER},
-    {MODIFIERKEY_ALT, KEY_QUOTE, 0, KEY_ESC, 0, KEY_TAB,    0, 0, 0, 0, KEY_PRINTSCREEN, 0},
-    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, MODIFIERKEY_GUI,        0, 0, 0, 0, KEY_PAGE_UP, 0},
-    {MODIFIERKEY_CTRL, 0, 0, 0, 0, KEY_COMMA,               0, 0, 0, KEY_HOME, KEY_PAGE_DOWN, KEY_END}
+    {MODIFIERKEY_GUI, KEY_PERIOD, NOP, NOP, NOP, NOP,                             NOP, NOP, KEY_EQUAL, KEY_LEFT_BRACE, KEY_RIGHT_BRACE, KEY_ENTER},
+    {MODIFIERKEY_ALT, KEY_QUOTE, NOP, KEY_ESC, NOP, KEY_TAB,    NOP, NOP, NOP, NOP, KEY_PRINTSCREEN, NOP},
+    {MODIFIERKEY_SHIFT, NOP, NOP, NOP, NOP,        NOP, NOP, NOP, NOP, KEY_PAGE_UP, NOP},
+    {MODIFIERKEY_CTRL, NOP, NOP, NOP, NOP, KEY_COMMA,               NOP, NOP, NOP, KEY_HOME, KEY_PAGE_DOWN, KEY_END}
   },
   {
-    {0, KEY_SLASH, 0, 0, 0, 0, 0,                   0, KEY_BACKSLASH, 0, 0, KEY_DELETE},
-    {MODIFIERKEY_ALT, 0, 0, 0, 0, 0,                0, 0, 0, 0, 0, 0},
-    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, 0,              0, 0, 0, 0, KEY_MEDIA_PLAY_PAUSE, 0},
-    {MODIFIERKEY_CTRL, 0, 0, 0, 0, KEY_MINUS,       0, 0, 0, KEY_MEDIA_VOLUME_DEC, KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_INC},
+    {MODIFIERKEY_GUI, KEY_SLASH, NOP, NOP, NOP, NOP, NOP,                   NOP, KEY_BACKSLASH, NOP, NOP, KEY_DELETE},
+    {MODIFIERKEY_ALT, NOP, NOP, NOP, NOP, NOP,                NOP, NOP, NOP, NOP, NOP, NOP},
+    {MODIFIERKEY_SHIFT, NOP, NOP, NOP, NOP, NOP,              NOP, NOP, NOP, NOP, KEY_MEDIA_PLAY_PAUSE, NOP},
+    {MODIFIERKEY_CTRL, NOP, NOP, NOP, NOP, KEY_MINUS,       NOP, NOP, NOP, KEY_MEDIA_VOLUME_DEC, KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_INC},
   },
   {
-    {0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,       KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11},
-    {MODIFIERKEY_ALT, KEY_F12, 0, 0, 0, 0,            0, 0, 0, 0, 0, 0},
-    {MODIFIERKEY_SHIFT, 0, 0, 0, 0, 0,                0, 0, 0, 0, 0, 0},
-    {MODIFIERKEY_CTRL, 0, 0, 0, 0, KEY_SEMICOLON,     0, 0, 0, 0, 0, 0},
+    {MODIFIERKEY_GUI, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,       KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11},
+    {MODIFIERKEY_ALT, KEY_F12, NOP, NOP, NOP, NOP,            NOP, NOP, NOP, NOP, NOP, NOP},
+    {MODIFIERKEY_SHIFT, NOP, NOP, NOP, NOP, NOP,                NOP, NOP, NOP, NOP, NOP, NOP},
+    {MODIFIERKEY_CTRL, NOP, NOP, NOP, NOP, KEY_SEMICOLON,     NOP, NOP, MODE_SWITCH, NOP, NOP, NOP},
   }
 };
 
@@ -157,7 +159,7 @@ void loop() {
 
   oled.setTextSize(1);
   oled.setTextColor(WHITE);
-  oled.setCursor(0, 30);
+  oled.setCursor(0, 24);
 
   for (int row = 0; row < NUM_ROWS; ++row) {
     for (int col = 0; col < NUM_COLS; ++col) {
@@ -179,6 +181,4 @@ void loop() {
   }
 
   oled.display();
-
-  delay(10);//Might be unnecessary
 }
