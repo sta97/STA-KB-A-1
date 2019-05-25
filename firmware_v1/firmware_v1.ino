@@ -12,6 +12,7 @@ const int col_pins[NUM_COLS] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16};
 
 const uint16_t NOP = 0;
 const uint16_t MODE_SWITCH = 0xFFFF;
+const uint16_t PAUSE_SENDING = MODE_SWITCH-1;
 
 /* modes will be added later. Modes will each have their own layers and logic so for example,
   the default layer for a WoW mode could have the actionbar keys moved down from the number row for reducing strain while another layer is for typing chat messages.
@@ -30,32 +31,33 @@ const uint16_t MODE_SWITCH = 0xFFFF;
 const uint16_t layers[][NUM_ROWS][NUM_COLS] =
 {
   {
-    {MODIFIERKEY_GUI, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5,          KEY_6, KEY_7, KEY_8, KEY_9,     KEY_0, KEY_BACKSPACE},
-    {MODIFIERKEY_ALT, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,          KEY_Y, KEY_U, KEY_I, KEY_O,     KEY_P, NOP},
-    {MODIFIERKEY_SHIFT, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,          KEY_H, KEY_J, KEY_K, KEY_L,     KEY_UP, NOP},
-    {MODIFIERKEY_CTRL, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_SPACE,      KEY_B, KEY_N, KEY_M, KEY_LEFT,  KEY_DOWN, KEY_RIGHT}
+    {KEY_ESC, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,             KEY_Y, KEY_U, KEY_I, KEY_O,     KEY_P, KEY_BACKSPACE},
+    {NOP, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,                 KEY_H, KEY_J, KEY_K, KEY_L,     KEY_ENTER, NOP},
+    {MODIFIERKEY_SHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B,   KEY_N, KEY_M, MODIFIERKEY_GUI,  MODIFIERKEY_ALT, MODIFIERKEY_CTRL, MODIFIERKEY_RIGHT_SHIFT},
+    {KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_SPACE,           KEY_SPACE, KEY_6, KEY_7, KEY_8, KEY_9,     KEY_0},
   },
   {
-    {MODIFIERKEY_GUI, KEY_PERIOD, NOP, NOP, NOP, NOP,                             NOP, NOP, KEY_EQUAL, KEY_LEFT_BRACE, KEY_RIGHT_BRACE, KEY_ENTER},
-    {MODIFIERKEY_ALT, KEY_QUOTE, NOP, KEY_ESC, NOP, KEY_TAB,    NOP, NOP, NOP, NOP, KEY_PRINTSCREEN, NOP},
-    {MODIFIERKEY_SHIFT, NOP, NOP, NOP, NOP,        NOP, NOP, NOP, NOP, KEY_PAGE_UP, NOP},
-    {MODIFIERKEY_CTRL, NOP, NOP, NOP, NOP, KEY_COMMA,               NOP, NOP, NOP, KEY_HOME, KEY_PAGE_DOWN, KEY_END}
+    {NOP, KEY_QUOTE, NOP, NOP, NOP, KEY_TAB,                             NOP, NOP, KEY_EQUAL, KEY_LEFT_BRACE, KEY_RIGHT_BRACE, KEY_DELETE},
+    {NOP,  NOP, NOP, NOP,  NOP, NOP,    NOP, NOP, NOP, NOP, KEY_PRINTSCREEN, NOP},
+    {NOP, NOP, NOP, NOP, NOP,        NOP, NOP, NOP, NOP, NOP, NOP},
+    {KEY_PERIOD, NOP, NOP, NOP, NOP, KEY_COMMA,               NOP, NOP, NOP, KEY_HOME, KEY_PAGE_DOWN, KEY_END}
   },
   {
-    {MODIFIERKEY_GUI, KEY_SLASH, NOP, NOP, NOP, NOP, NOP,                   NOP, KEY_BACKSLASH, NOP, NOP, KEY_DELETE},
-    {MODIFIERKEY_ALT, NOP, NOP, NOP, NOP, NOP,                NOP, NOP, NOP, NOP, NOP, NOP},
-    {MODIFIERKEY_SHIFT, NOP, NOP, NOP, NOP, NOP,              NOP, NOP, NOP, NOP, KEY_MEDIA_PLAY_PAUSE, NOP},
-    {MODIFIERKEY_CTRL, NOP, NOP, NOP, NOP, KEY_MINUS,       NOP, NOP, NOP, KEY_MEDIA_VOLUME_DEC, KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_INC},
+    {NOP, NOP, KEY_UP, NOP, NOP, NOP, NOP,                   NOP, KEY_BACKSLASH, NOP, NOP, KEY_DELETE},
+    {NOP, KEY_LEFT, KEY_DOWN, KEY_RIGHT, NOP, NOP,                NOP, NOP, NOP, NOP, NOP, NOP},
+    {NOP, NOP, NOP, NOP, NOP, NOP,              NOP, NOP, NOP, NOP, NOP, NOP},
+    {KEY_SLASH, NOP, NOP, NOP, NOP, KEY_MINUS,       NOP, NOP, NOP, KEY_MEDIA_VOLUME_DEC, KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_INC},
   },
   {
-    {MODIFIERKEY_GUI, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,       KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11},
-    {MODIFIERKEY_ALT, KEY_F12, NOP, NOP, NOP, NOP,            NOP, NOP, NOP, NOP, NOP, NOP},
-    {MODIFIERKEY_SHIFT, NOP, NOP, NOP, NOP, NOP,                NOP, NOP, NOP, NOP, NOP, NOP},
-    {MODIFIERKEY_CTRL, NOP, NOP, NOP, NOP, KEY_SEMICOLON,     NOP, NOP, MODE_SWITCH, NOP, NOP, NOP},
+    {KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,       KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12},
+    {NOP, NOP, NOP, NOP, NOP, NOP,            NOP, NOP, NOP, NOP, NOP, NOP},
+    {NOP, NOP, NOP, NOP, NOP, NOP,                NOP, NOP, NOP, NOP, NOP, NOP},
+    {NOP, NOP, NOP, NOP, NOP, KEY_SEMICOLON,     NOP, NOP, MODE_SWITCH, NOP, NOP, NOP},
   }
 };
 
 unsigned layer = 0;
+unsigned mode = 0;
 
 bool new_state[NUM_ROWS][NUM_COLS] = {
   {false, false, false, false, false, false,   false, false, false, false, false, false},
@@ -71,11 +73,6 @@ bool old_state[NUM_ROWS][NUM_COLS] = {
   {false, false, false, false, false, false,   false, false, false, false, false, false}
 };
 
-//might be used later for fuzzy matching layer names
-int lev_dist(String s1, String s2) {
-
-}
-
 void setup_matrix() {
   for (int i = 0; i < NUM_ROWS; ++i) {
     pinMode(row_pins[i], INPUT_PULLUP);
@@ -90,6 +87,8 @@ void setup_matrix() {
 void setup() {
   setup_matrix();
   oled.begin();
+  oled.clearDisplay();
+  oled.display();
 }
 
 void read_matrix(void) {
@@ -133,9 +132,9 @@ void add_keys() {
 
 void set_layer() {
   layer = 0;
-  if (new_state[1][11])
+  if (new_state[1][0])
     layer = layer | 1;
-  if (new_state[2][11])
+  if (new_state[1][11])
     layer = layer | 2;
 }
 
@@ -155,30 +154,33 @@ void loop() {
 
   Keyboard.send_now();
 
-  oled.clearDisplay();
+  delay(50);
+  /*
+    oled.clearDisplay();
 
-  oled.setTextSize(1);
-  oled.setTextColor(WHITE);
-  oled.setCursor(0, 24);
+    oled.setTextSize(1);
+    oled.setTextColor(WHITE);yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+    oled.setCursor(0, 24);
 
-  for (int row = 0; row < NUM_ROWS; ++row) {
-    for (int col = 0; col < NUM_COLS; ++col) {
-      const int x = row * 5;
-      const int y = col * 5 + (col > 5 ? 5 : 0);
-      oled.drawRect(y, x, 5, 5, WHITE);
-      if (new_state[row][col])
-        oled.fillRect(y + 1, x + 1, 3, 3, WHITE);
+    for (int row = 0; row < NUM_ROWS; ++row) {
+      for (int col = 0; col < NUM_COLS; ++col) {
+        const int x = row * 5;
+        const int y = col * 5 + (col > 5 ? 5 : 0);
+        oled.drawRect(y, x, 5, 5, WHITE);
+        if (new_state[row][col])
+          oled.fillRect(y + 1, x + 1, 3, 3, WHITE);
+      }
     }
-  }
 
-  oled.print("layer ");
-  oled.println(layer);
+    oled.print("layer ");
+    oled.println(layer);
 
-  for (int i = 0; i < 6; ++i) {
-    oled.print(keyboard_keys[i]);
-    if (i < 5)
-      oled.print(",");
-  }
+    for (int i = 0; i < 6; ++i) {
+      oled.print(keyboard_keys[i]);
+      if (i < 5)
+        oled.print(",");
+    }
 
-  oled.display();
+    oled.display();
+  */
 }
